@@ -1,59 +1,109 @@
 // Sliders Setup
-var slider = document.getElementById("width-bar");
-var output = document.getElementById("width-setting");
-var slider2 = document.getElementById("height-bar");
-var output2 = document.getElementById("height-setting");
-output.innerHTML = slider.value; 
-output2.innerHTML = slider2.value; 
-createTable("test",slider.value,slider2.value)
+var widthSlider = document.getElementById("width-bar");
+var width = document.getElementById("width-setting");
+var heightSlider = document.getElementById("height-bar");
+var height = document.getElementById("height-setting");
+width.innerHTML = widthSlider.value; 
+height.innerHTML = heightSlider.value; 
+createTable("minefield",widthSlider.value,heightSlider.value)
 
-slider.oninput = function() {
-    output.innerHTML = this.value;
-    createTable("test",this.value,slider2.value)
+widthSlider.oninput = function() {
+    width.innerHTML = this.value;
+    createTable("minefield",heightSlider.value,this.value)
 }
-slider2.oninput = function() {
-    output2.innerHTML = this.value;
-    createTable("test",this.value,slider.value)
+heightSlider.oninput = function() {
+    height.innerHTML = this.value;
+    createTable("minefield",this.value,widthSlider.value)
 }
 
-// $('input[type="button"]').click(function() {
-//    createTable("test", $("#rows").val(), $("#cols").val());
-//    // numberDiagonally("test");     
-// });
-
-// function numberDiagonally(tableId) {
-//     var rows = document.getElementById(tableId).rows,
-//         numRows = rows.length,
-//         numCols = rows[0].cells.length,
-//         sq = numRows + numCols - 1,
-//         d, x, y,
-//         i = 1,
-//         dc,
-//         c = -1,
-//         colors = ["green","yellow","orange","red"];
-    
-//     diagonalLoop:
-//     for (d = 0; d < sq; d++) {
-//         dc = "diagonal" + d;
-//         for (y = d, x = 0; y >= 0; y--, x++) {
-//             if (x === numCols)
-//                 continue diagonalLoop;
-//             if (y < numRows)
-//                 $(rows[y].cells[x]).html(i++).addClass(dc);
-//         }
-//     }
-//     for (d = 0; d < sq; d++)
-//         $(".diagonal" + d).css("background-color", colors[c=(c+1)%colors.length]);
-// }
-
-function createTable(tableId, rows, cols) {
-    var x,y,
-        o = [];
-    for (y = 0; y < rows; y++){
-        o.push("<tr>");
-        for(x = 0; x < cols; x++)
-            o.push("<td></td>");
-        o.push("</tr>");
+function createTable(minefield, rows, cols) {
+    var i,j,
+        cells = [];
+    for (i = 0; i < rows; i++){
+        cells.push("<tr>");
+        for(j = 0; j < cols; j++)
+            cells.push("<td></td>");
+        cells.push("</tr>");
     }
-    $("#" + tableId).html(o.join(""));
+    $("#" + minefield).html(cells.join(""));
+    $( "td" ).addClass( "cell" );
 }
+
+//Set up timer
+class Stopwatch {
+    constructor(display, results) {
+        this.running = false;
+        this.display = display;
+        this.results = results;
+        this.reset();
+        this.print(this.times);
+    }
+    
+    reset() {
+        this.times = [ 0, 0, 0 ];
+    }
+    
+    start() {
+        if (!this.time) this.time = performance.now();
+        if (!this.running) {
+            this.running = true;
+            requestAnimationFrame(this.step.bind(this));
+        }
+    }
+ 
+    stop() {
+        this.running = false;
+        this.time = null;
+    }
+
+    
+    step(timestamp) {
+        if (!this.running) return;
+        this.calculate(timestamp);
+        this.time = timestamp;
+        this.print();
+        requestAnimationFrame(this.step.bind(this));
+    }
+    
+    calculate(timestamp) {
+        var diff = timestamp - this.time;
+        // Hundredths of a second are 100 ms
+        this.times[2] += diff / 10;
+        // Seconds are 100 hundredths of a second
+        if (this.times[2] >= 100) {
+            this.times[1] += 1;
+            this.times[2] -= 100;
+        }
+        // Minutes are 60 seconds
+        if (this.times[1] >= 60) {
+            this.times[0] += 1;
+            this.times[1] -= 60;
+        }
+    }
+    
+    print() {
+        this.display.innerText = this.format(this.times);
+    }
+    
+    format(times) {
+        return `\
+        ${pad0(times[0], 2)}:\
+        ${pad0(times[1], 2)}`;
+    }
+}
+
+function pad0(value, count) {
+    var result = value.toString();
+    for (; result.length < count; --count)
+        result = '0' + result;
+    return result;
+}
+
+//Test timer
+let stopwatch = new Stopwatch(
+    document.querySelector('.stopwatch'));
+
+$( ".cell" ).click(function() {
+	$(this).css('backgroundColor', '#999');
+	stopwatch.start();
+});
