@@ -3,11 +3,11 @@ var widthInput = document.getElementById("width-input");
 var width = document.getElementById("width-setting");
 var heightInput = document.getElementById("height-input");
 var height = document.getElementById("height-setting");
+var minesNum = document.getElementById("mines-setting")
 var minesInput = document.getElementById("mines-input");
 width.innerHTML = widthInput.value; 
 height.innerHTML = heightInput.value; 
 createTable("minefield",heightInput.value, widthInput.value, minesInput.value)
-
 
 widthInput.oninput = function() {
     width.innerHTML = this.value;
@@ -21,24 +21,127 @@ $('input[id="start-game"]').click(function() {
 	if(minesInput.value > heightInput.value*widthInput.value-1){
 		alert("Mission impossible")
 	}else{
-		// console.log(minesInput.value)
+		minesNum.innerHTML=minesInput.value;
 		timer.resetWatch();
 		createTable("minefield", heightInput.value, widthInput.value, minesInput.value);
 	}
 });
 
+// function (){
+// 	$( ".cleared" ).click(function() {
 
+// 	}
+// } 
 function gamePlay(){
 	$( ".cell" ).click(function() {
-		// $(this).css('backgroundColor', 'black');
-		this.innerHTML=this.attributes[1].value;
-		$(this).css({'backgroundColor':'black', "color":"white"});
-    	timer.start();  	
-	});
-	$( ".bomb" ).click(function() {
-		this.innerHTML='b';
-		$(this).css({'backgroundColor':'red', "color":"white"});
-	});
+		timer.start();  
+		if(event.shiftKey){
+			if($(this).hasClass("marked")){
+				minesNum.innerHTML=parseInt(minesNum.innerHTML)+1;
+				$(this).removeClass("marked");
+			}else{
+				$(this).addClass("marked");
+				minesNum.innerHTML=parseInt(minesNum.innerHTML)-1;
+			}
+		}else{
+			if($(this).hasClass("marked")){
+			}else{
+				if($(this).hasClass('bomb')){
+					gameOver(this);
+    			}else{
+    				if($(this).hasClass("cleared")){
+    					var flagsExp = this.attributes[1].value;
+    					if(flagsExp > 0){
+    						var flagsCur = 0;
+    							colNum = parseInt(widthInput.value);
+    							rowNum = parseInt(heightInput.value);
+    							size = colNum*rowNum;
+    							arr = Array.from(document.getElementsByClassName('cell'))
+    					 		indexSel = arr.indexOf(this);
+
+    					 	if($(arr[indexSel-1]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel+1]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel+colNum]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel-colNum]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel+colNum-1]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel+colNum+1]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel-colNum-1]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if($(arr[indexSel-colNum+1]).hasClass('marked')){
+    					 		flagsCur++;
+    					 	}
+    					 	if(flagsCur==flagsExp){
+    					 		console.log("hello")
+    					 		if((indexSel+1)%colNum!=0){
+    					 			checkBomb(indexSel+1);
+    					 		}
+    					 		if(indexSel-1>=0 && indexSel%colNum!=0){
+    					 			checkBomb(indexSel-1);
+    					 		}
+    					 		if(indexSel-colNum>=0){
+    					 			checkBomb(indexSel-colNum)
+    					 		}
+    					 		if(indexSel+colNum<size){
+    					 			checkBomb(indexSel+colNum);
+    					 		}
+    					 		if((indexSel+colNum+1)<size && (indexSel+colNum+1)%colNum!=0){
+    					 			checkBomb(indexSel+colNum+1);
+    					 		}
+    					 		if((indexSel+colNum-1)<size && (indexSel+colNum)%colNum){
+    					 			checkBomb(indexSel+colNum-1);
+    					 		}
+    					 		if((indexSel-colNum+1)>=0 && (indexSel-colNum+1)%colNum!=0){
+    					 			checkBomb(indexSel-colNum+1);
+    					 		}
+    					 		if((indexSel-colNum-1)>=0 && (indexSel-colNum)%colNum!=0){
+    					 			checkBomb(indexSel-colNum-1)
+    					 		}
+    					 	}
+
+    					}
+
+    				}else{
+    					$(this).addClass("cleared");
+    					this.innerHTML=this.attributes[1].value;
+    				}
+    			}
+			}
+    	}
+    });
+}
+
+
+function checkBomb(index){
+	console.log(index);
+	arr = Array.from(document.getElementsByClassName('cell'))
+	if($(arr[index]).hasClass('marked')!=true && ($(arr[index])).hasClass('bomb')==true){
+		gameOver(arr[index]);
+	}
+
+	if($(arr[index]).hasClass('marked')!=true && ($(arr[index])).hasClass('bomb')!=true){
+		$(arr[index]).addClass("cleared");
+		arr[index].innerHTML=arr[index].attributes[1].value;
+	}
+
+}
+
+function gameOver(mine){
+	timer.stop();
+	mine.innerHTML='b';
+	$(mine).css({'backgroundColor':'red', "color":"white"});
 }
 
 function createTable(minefield, rows, cols, minesInput) {
@@ -192,16 +295,3 @@ function pad0(value, count) {
 
 let timer = new Timer(
     document.querySelector('.timer'));
-
-// $(document).ready(function() {
-// 	$( ".cell" ).click(function() {
-// 		this.innerHTML=this.attributes[1].value;
-// 		$(this).css({'backgroundColor':'black', "color":"white"});
-// 		timer.start();
-// 	});
-
-// 	$( ".bomb" ).click(function() {
-// 		this.innerHTML=this.attributes[1].value;
-// 		$(this).css({'backgroundColor':'red', "color":"white"});
-// 	});
-// });

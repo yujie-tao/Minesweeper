@@ -13,3 +13,10 @@
 .bomb{
 	/*background-color:red;*/
 }
+.marked{
+	background-color: orange;
+}
+.cleared{
+	background-color: black;
+	color: white;
+}
