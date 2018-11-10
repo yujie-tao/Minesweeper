@@ -5,16 +5,29 @@ var heightSlider = document.getElementById("height-bar");
 var height = document.getElementById("height-setting");
 width.innerHTML = widthSlider.value; 
 height.innerHTML = heightSlider.value; 
-createTable("minefield",widthSlider.value,heightSlider.value)
+createTable("minefield",heightSlider.value,widthSlider.value)
+
 
 widthSlider.oninput = function() {
     width.innerHTML = this.value;
     createTable("minefield",heightSlider.value,this.value)
+    timer.resetWatch();
+    $( ".cell" ).click(function() {
+    	$(this).css('backgroundColor', 'black');
+    	timer.start();
+	});
 }
+
 heightSlider.oninput = function() {
     height.innerHTML = this.value;
     createTable("minefield",this.value,widthSlider.value)
+    timer.resetWatch();
+    $( ".cell" ).click(function() {
+    	$(this).css('backgroundColor', 'black');
+    	timer.start();
+	});
 }
+
 
 function createTable(minefield, rows, cols) {
     var i,j,
@@ -30,7 +43,7 @@ function createTable(minefield, rows, cols) {
 }
 
 //Set up timer
-class Stopwatch {
+class Timer {
     constructor(display, results) {
         this.running = false;
         this.display = display;
@@ -38,9 +51,17 @@ class Stopwatch {
         this.reset();
         this.print(this.times);
     }
+
     
     reset() {
         this.times = [ 0, 0, 0 ];
+    }
+
+    resetWatch(){
+    	this.times = [0,0,0]
+    	this.running = false;
+    	this.time = null;
+    	this.print(this.times);
     }
     
     start() {
@@ -99,11 +120,16 @@ function pad0(value, count) {
     return result;
 }
 
-//Test timer
-let stopwatch = new Stopwatch(
-    document.querySelector('.stopwatch'));
+let timer = new Timer(
+    document.querySelector('.timer'));
 
-$( ".cell" ).click(function() {
-	$(this).css('backgroundColor', '#999');
-	stopwatch.start();
+$(document).ready(function() {
+	$( ".cell" ).click(function() {
+		$(this).css('backgroundColor', 'black');
+		timer.start();
+	});
 });
+
+
+
+

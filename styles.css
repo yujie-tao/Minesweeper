@@ -1,7 +1,11 @@
-td {
+.cell{
     text-align : center;
     width : 25px;
     height : 25px;
-    background-color: black;
+    background-color: grey;
     border: 2px solid white;
+}
+
+.cell:hover{
+	background-color: black;
 }
