@@ -18,17 +18,24 @@
 			<div class="col-12 col-centered">
 				<h1 class="title">Minesweeper</h1>
 				<div class="timer"></div>
-				<div class="sliders">
+				<div class="Controls">
 					<div class="slider">
 						<h4>Adjust width</h4>
-						<input type="range" min="8" max="40" value="8" id="width-bar">
+						<input type="range" min="8" max="40" value="8" id="width-input">
 						<h6 id="width-setting"></h6>
 					</div>
 					<div class="slider">
 						<h4>Adjust height</h4>
-						<input type="range" min="8" max="30" value="8" id="height-bar">
+						<input type="range" min="8" max="30" value="8" id="height-input">
 						<h6 id="height-setting"></h6>
 					</div>
+					<div class="mines-setup">
+						<h4>Number of mines</h4>
+						<input type="text" id="mines-input">
+						<h6 id="mines-setting"></h6>
+					</div>
+
+					<input type="button" value="Start!" id="start-game">
 				</div>
 				<div class="playground">
 					<table id="minefield"></table>

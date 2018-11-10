@@ -9,3 +9,7 @@
 .cell:hover{
 	background-color: black;
 }
+
+.bomb{
+	background-color:red;
+}

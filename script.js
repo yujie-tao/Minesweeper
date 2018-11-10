@@ -1,35 +1,35 @@
-// Sliders Setup
-var widthSlider = document.getElementById("width-bar");
+// Controls Setup
+var widthInput = document.getElementById("width-input");
 var width = document.getElementById("width-setting");
-var heightSlider = document.getElementById("height-bar");
+var heightInput = document.getElementById("height-input");
 var height = document.getElementById("height-setting");
-width.innerHTML = widthSlider.value; 
-height.innerHTML = heightSlider.value; 
-createTable("minefield",heightSlider.value,widthSlider.value)
+var minesInput = document.getElementById("mines-input");
+width.innerHTML = widthInput.value; 
+height.innerHTML = heightInput.value; 
+createTable("minefield",heightInput.value, widthInput.value, minesInput.value)
 
-
-widthSlider.oninput = function() {
+widthInput.oninput = function() {
     width.innerHTML = this.value;
-    createTable("minefield",heightSlider.value,this.value)
-    timer.resetWatch();
-    $( ".cell" ).click(function() {
-    	$(this).css('backgroundColor', 'black');
-    	timer.start();
-	});
 }
 
-heightSlider.oninput = function() {
+heightInput.oninput = function() {
     height.innerHTML = this.value;
-    createTable("minefield",this.value,widthSlider.value)
-    timer.resetWatch();
-    $( ".cell" ).click(function() {
-    	$(this).css('backgroundColor', 'black');
-    	timer.start();
-	});
 }
 
+$('input[id="start-game"]').click(function() {
+	if(minesInput.value > heightInput.value*widthInput.value-1){
+		alert("Mission impossible")
+	}else{
+		// console.log(minesInput.value)
+		timer.resetWatch();
+		createTable("minefield", heightInput.value, widthInput.value, minesInput.value);
 
-function createTable(minefield, rows, cols) {
+
+	}
+});
+
+
+function createTable(minefield, rows, cols, minesInput) {
     var i,j,
         cells = [];
     for (i = 0; i < rows; i++){
@@ -40,6 +40,33 @@ function createTable(minefield, rows, cols) {
     }
     $("#" + minefield).html(cells.join(""));
     $( "td" ).addClass( "cell" );
+    assignMines(minesInput);
+    $( ".cell" ).click(function() {
+		$(this).css('backgroundColor', 'black');
+    	timer.start();
+	});
+}
+
+function assignMines(minesInput){
+	var rows = document.getElementById("minefield").rows;
+		rowsNum = rows.length;
+		colsNum = rows[0].cells.length;
+	// console.log(rows.length);
+	// $(rows[0].cells[1]).addClass("bomb");
+	var i = minesInput;
+	while(i>0){
+		rowsRand = Math.floor(Math.random() * (rowsNum - 0) + 0);
+		colsRand = Math.floor(Math.random() * (colsNum - 0) + 0);
+		console.log(rowsRand)
+		console.log(colsRand)
+		if($(rows[rowsRand].cells[colsRand]).hasClass("bomb")){
+			continue;
+		}else{
+			$(rows[rowsRand].cells[colsRand]).addClass("bomb");
+		}
+		i--;
+	}
+
 }
 
 //Set up timer
@@ -129,7 +156,3 @@ $(document).ready(function() {
 		timer.start();
 	});
 });
-
-
-
-
