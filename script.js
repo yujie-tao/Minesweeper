@@ -8,6 +8,7 @@ width.innerHTML = widthInput.value;
 height.innerHTML = heightInput.value; 
 createTable("minefield",heightInput.value, widthInput.value, minesInput.value)
 
+
 widthInput.oninput = function() {
     width.innerHTML = this.value;
 }
@@ -26,6 +27,20 @@ $('input[id="start-game"]').click(function() {
 	}
 });
 
+
+function gamePlay(){
+	$( ".cell" ).click(function() {
+		// $(this).css('backgroundColor', 'black');
+		this.innerHTML=this.attributes[1].value;
+		$(this).css({'backgroundColor':'black', "color":"white"});
+    	timer.start();  	
+	});
+	$( ".bomb" ).click(function() {
+		this.innerHTML='b';
+		$(this).css({'backgroundColor':'red', "color":"white"});
+	});
+}
+
 function createTable(minefield, rows, cols, minesInput) {
     var i,j,
         cells = [];
@@ -39,10 +54,7 @@ function createTable(minefield, rows, cols, minesInput) {
     $( "td" ).addClass( "cell" );
     $(".cell").attr("data-adjacent-bombs", 0);
     assignMines(rows,cols,minesInput);
-    $( ".cell" ).click(function() {
-		$(this).css('backgroundColor', 'black');
-    	timer.start();
-	});
+    gamePlay();
 }
 
 function assignMines(rows, cols, minesInput){
@@ -57,44 +69,46 @@ function assignMines(rows, cols, minesInput){
 			continue;
 		}else{
 			$(cell[random]).addClass('bomb');
-			// cell[random].innerHTML = cell[random].getAttribute('data-adjacent-bombs')
-			console.log(random)
-			console.log(random+colNum)
 			if(random+colNum<size){
 				cell[random+colNum].attributes[1].value = parseInt(cell[random+colNum].attributes[1].value)+1;
-				cell[random+colNum].innerHTML = cell[random+colNum].attributes[1].value;
+				// cell[random+colNum].innerHTML = cell[random+colNum].attributes[1].value;
 			}
 			if(random-colNum>=0){
 				cell[random-colNum].attributes[1].value = parseInt(cell[random-colNum].attributes[1].value)+1;
-				cell[random-colNum].innerHTML = cell[random-colNum].attributes[1].value;
+				// cell[random-colNum].innerHTML = cell[random-colNum].attributes[1].value;
 			}
 			if((random+1)%colNum!=0){
 				cell[random+1].attributes[1].value = parseInt(cell[random+1].attributes[1].value)+1;
-				cell[random+1].innerHTML = cell[random+1].attributes[1].value;
+				// cell[random+1].innerHTML = cell[random+1].attributes[1].value;
 			}
 			if(random-1>=0 && random%colNum!=0){
 				cell[random-1].attributes[1].value = parseInt(cell[random-1].attributes[1].value)+1;
-				cell[random-1].innerHTML = cell[random-1].attributes[1].value;
+				// cell[random-1].innerHTML = cell[random-1].attributes[1].value;
 			}
 			if((random+colNum+1)<size && (random+colNum+1)%colNum!=0){
 				cell[random+colNum+1].attributes[1].value = parseInt(cell[random+colNum+1].attributes[1].value)+1;
-				cell[random+colNum+1].innerHTML = cell[random+colNum+1].attributes[1].value;
+				// cell[random+colNum+1].innerHTML = cell[random+colNum+1].attributes[1].value;
 			}
 			if((random+colNum-1)<size && (random+colNum)%colNum!=0){
 				cell[random+colNum-1].attributes[1].value = parseInt(cell[random+colNum-1].attributes[1].value)+1;
-				cell[random+colNum-1].innerHTML = cell[random+colNum-1].attributes[1].value;
+				// cell[random+colNum-1].innerHTML = cell[random+colNum-1].attributes[1].value;
 			}
 			if((random-colNum+1)>=0 && (random-colNum+1)%colNum!=0){
 				cell[random-colNum+1].attributes[1].value = parseInt(cell[random-colNum+1].attributes[1].value)+1;
-				cell[random-colNum+1].innerHTML = cell[random-colNum+1].attributes[1].value;
+				// cell[random-colNum+1].innerHTML = cell[random-colNum+1].attributes[1].value;
 			}
 			if((random-colNum-1)>=0 && (random-colNum)%colNum!=0){
 				cell[random-colNum-1].attributes[1].value = parseInt(cell[random-colNum-1].attributes[1].value)+1;
-				cell[random-colNum-1].innerHTML = cell[random-colNum-1].attributes[1].value;
+				// cell[random-colNum-1].innerHTML = cell[random-colNum-1].attributes[1].value;
 			}
 		}
 
 		i--
+	}
+
+	for(var j = 0;j<minesInput;j++){
+		document.getElementsByClassName('bomb')[j].attributes[1].value = 1000;
+		// document.getElementsByClassName('bomb')[j].innerHTML = document.getElementsByClassName('bomb')[j].attributes[1].value;
 	}
 }
 
@@ -179,9 +193,15 @@ function pad0(value, count) {
 let timer = new Timer(
     document.querySelector('.timer'));
 
-$(document).ready(function() {
-	$( ".cell" ).click(function() {
-		$(this).css('backgroundColor', 'black');
-		timer.start();
-	});
-});
+// $(document).ready(function() {
+// 	$( ".cell" ).click(function() {
+// 		this.innerHTML=this.attributes[1].value;
+// 		$(this).css({'backgroundColor':'black', "color":"white"});
+// 		timer.start();
+// 	});
+
+// 	$( ".bomb" ).click(function() {
+// 		this.innerHTML=this.attributes[1].value;
+// 		$(this).css({'backgroundColor':'red', "color":"white"});
+// 	});
+// });
