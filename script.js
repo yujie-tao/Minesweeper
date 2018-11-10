@@ -26,7 +26,6 @@ $('input[id="start-game"]').click(function() {
 	}
 });
 
-
 function createTable(minefield, rows, cols, minesInput) {
     var i,j,
         cells = [];
@@ -48,44 +47,56 @@ function createTable(minefield, rows, cols, minesInput) {
 
 function assignMines(rows, cols, minesInput){
 	var cell = document.getElementsByClassName('cell');
-	var max = rows*cols;
-	var i = minesInput;
+		rowNum = parseInt(rows);
+		colNum = parseInt(cols);
+		size = rowNum*colNum;
+		i = minesInput;
 	while(i>0){
-		random = Math.floor(Math.random() * (max - 0) + 0);
+		random = Math.floor(Math.random() * (size - 0) + 0);
 		if($(cell[random]).hasClass('bomb')){
 			continue;
 		}else{
 			$(cell[random]).addClass('bomb');
+			// cell[random].innerHTML = cell[random].getAttribute('data-adjacent-bombs')
+			console.log(random)
+			console.log(random+colNum)
+			if(random+colNum<size){
+				cell[random+colNum].attributes[1].value = parseInt(cell[random+colNum].attributes[1].value)+1;
+				cell[random+colNum].innerHTML = cell[random+colNum].attributes[1].value;
+			}
+			if(random-colNum>=0){
+				cell[random-colNum].attributes[1].value = parseInt(cell[random-colNum].attributes[1].value)+1;
+				cell[random-colNum].innerHTML = cell[random-colNum].attributes[1].value;
+			}
+			if((random+1)%colNum!=0){
+				cell[random+1].attributes[1].value = parseInt(cell[random+1].attributes[1].value)+1;
+				cell[random+1].innerHTML = cell[random+1].attributes[1].value;
+			}
+			if(random-1>=0 && random%colNum!=0){
+				cell[random-1].attributes[1].value = parseInt(cell[random-1].attributes[1].value)+1;
+				cell[random-1].innerHTML = cell[random-1].attributes[1].value;
+			}
+			if((random+colNum+1)<size && (random+colNum+1)%colNum!=0){
+				cell[random+colNum+1].attributes[1].value = parseInt(cell[random+colNum+1].attributes[1].value)+1;
+				cell[random+colNum+1].innerHTML = cell[random+colNum+1].attributes[1].value;
+			}
+			if((random+colNum-1)<size && (random+colNum)%colNum!=0){
+				cell[random+colNum-1].attributes[1].value = parseInt(cell[random+colNum-1].attributes[1].value)+1;
+				cell[random+colNum-1].innerHTML = cell[random+colNum-1].attributes[1].value;
+			}
+			if((random-colNum+1)>=0 && (random-colNum+1)%colNum!=0){
+				cell[random-colNum+1].attributes[1].value = parseInt(cell[random-colNum+1].attributes[1].value)+1;
+				cell[random-colNum+1].innerHTML = cell[random-colNum+1].attributes[1].value;
+			}
+			if((random-colNum-1)>=0 && (random-colNum)%colNum!=0){
+				cell[random-colNum-1].attributes[1].value = parseInt(cell[random-colNum-1].attributes[1].value)+1;
+				cell[random-colNum-1].innerHTML = cell[random-colNum-1].attributes[1].value;
+			}
 		}
 
 		i--
 	}
 }
-
-// function assignMines(minesInput){
-// 	var rows = document.getElementById("minefield").rows;
-// 		rowsNum = rows.length;
-// 		colsNum = rows[0].cells.length;
-// 	// console.log(rows.length);
-// 	// $(rows[0].cells[1]).addClass("bomb");
-// 	var i = minesInput;
-// 	while(i>0){
-// 		rowsRand = Math.floor(Math.random() * (rowsNum - 0) + 0);
-// 		colsRand = Math.floor(Math.random() * (colsNum - 0) + 0);
-// 		console.log(rowsRand)
-// 		console.log(colsRand)
-// 		if($(rows[rowsRand].cells[colsRand]).hasClass("bomb")){
-// 			// document.getElementsByClassName('cell')[0].innerHTML = parseInt(document.getElementsByClassName('cell')[0].getAttribute('data-adjacent-bombs'))
-// 			continue;
-// 		}else{
-// 			$(rows[rowsRand].cells[colsRand]).addClass("bomb");
-// 			$(rows[rowsRand].cells[colsRand]).innerHTML=$(rows[rowsRand].cells[colsRand]).attr('data-adjacent-bombs')
-// 			console.log($(rows[rowsRand].cells[colsRand]).attr('data-adjacent-bombs'))
-// 		}
-// 		i--;
-// 	}
-
-// }
 
 //Set up timer
 class Timer {
