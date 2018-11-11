@@ -8,6 +8,7 @@ var minesInput = document.getElementById("mines-input");
 width.innerHTML = widthInput.value; 
 height.innerHTML = heightInput.value; 
 createTable("minefield",heightInput.value, widthInput.value, minesInput.value)
+document.getElementsByClassName('score')[0].innerText = localStorage.getItem("highest-score");
 
 widthInput.oninput = function() {
     width.innerHTML = this.value;
@@ -28,11 +29,6 @@ $('input[id="start-game"]').click(function() {
 	}
 });
 
-// function (){
-// 	$( ".cleared" ).click(function() {
-
-// 	}
-// } 
 function gamePlay(){
 	$( ".cell" ).click(function() {
 		timer.start();  
@@ -87,7 +83,6 @@ function gamePlay(){
     					 		flagsCur++;
     					 	}
     					 	if(flagsCur==flagsExp){
-    					 		console.log("hello")
     					 		if((indexSel+1)%colNum!=0){
     					 			checkBomb(indexSel+1);
     					 		}
@@ -126,13 +121,32 @@ function gamePlay(){
 			}
     	}
 
-    	// arr = Array.from(document.getElementsByClassName('cell'))
-    
-    	// for (i = 0;i < var.length;i++){
-    	// 	if($(var[i]).hasClass('marked')&& $(var[i]).hasClass('marked')){
-    	// 	}
-    	// }
+    	var winning = true;
+    	arr = Array.from(document.getElementsByClassName('cell'))
 
+    	for (i = 0;i < arr.length;i++){
+    		if($(arr[i]).hasClass('marked') && $(arr[i]).hasClass('bomb')!=true){
+    			winning = false
+    			break;
+    		}
+    		if($(arr[i]).hasClass('marked')!=true && $(arr[i]).hasClass('bomb')){
+    			winning = false
+    			break;
+    		}
+    		if($(arr[i]).hasClass('marked') && $(arr)[i].attributes[1].value<1000){
+    			winning = false
+    			break;
+    		}
+
+    		if($(arr[i]).hasClass('cleared')!=true && $(arr)[i].attributes[1].value<1000){
+    			winning = false
+    			break;
+    		}
+    	}
+
+    	if(winning){
+    		gameWin();
+    	}
 
     });
 
@@ -140,7 +154,7 @@ function gamePlay(){
 
 
 function checkBomb(index){
-	console.log(index);
+	// gameOver = false;
 	arr = Array.from(document.getElementsByClassName('cell'))
 	if($(arr[index]).hasClass('marked')!=true && ($(arr[index])).hasClass('bomb')==true){
 		gameOver(arr[index]);
@@ -155,16 +169,56 @@ function checkBomb(index){
 
 }
 
+
 function gameOver(mine){
 	timer.stop();
+	arr = Array.from(document.getElementsByClassName('cell'))
+	for(i = 0; i<arr.length; i++){
+		if($(arr[i]).hasClass('bomb')){
+			arr[i].innerHTML='x';
+			$(arr[i]).css({'backgroundColor':'red', "color":"white"});
+		}else{
+			if(arr[i].attributes[1].value>1){
+				arr[i].innerHTML=arr[i].attributes[1].value;
+			}
+			$(arr[i]).addClass('cleared');
+		}
+	}
 	mine.innerHTML='b';
 	$(mine).css({'backgroundColor':'red', "color":"white"});
+
 	setTimeout( function(){
-		$('.cell').addClass('gameOver');
 		alert("Game Over")
 		location.reload();
-  }, 300 );
+	}, 300 );
+}
 
+function gameWin(mine){
+	timer.stop();
+	var cur = document.getElementsByClassName('timer')[0].innerText.split(":");
+	var record= document.getElementsByClassName('score')[0].innerText.split(":");
+
+	if(parseInt(cur[0])<parseInt(record[0]) || (parseInt(cur[0])==parseInt(record[0]) && parseInt(cur[1])<parseInt(record)[1]) || (parseInt(record[0])==0 && parseInt(record[1])==0)){
+		 document.getElementsByClassName('score')[0].innerText = document.getElementsByClassName('timer')[0].innerText
+		localStorage.setItem("highest-score", document.getElementsByClassName('timer')[0].innerText);
+	}
+
+	for(i = 0; i<arr.length; i++){
+		if($(arr[i]).hasClass('bomb')){
+			arr[i].innerHTML='O';
+			$(arr[i]).css({"color":"white"});
+		}else{
+			if(arr[i].attributes[1].value>1){
+				arr[i].innerHTML=arr[i].attributes[1].value;
+			}
+			$(arr[i]).addClass('cleared');
+		}
+	}
+
+	setTimeout( function(){
+		alert("You win the game!")
+		location.reload();
+	}, 300 );
 }
 
 function createTable(minefield, rows, cols, minesInput) {
@@ -197,35 +251,34 @@ function assignMines(rows, cols, minesInput){
 			$(cell[random]).addClass('bomb');
 			if(random+colNum<size){
 				cell[random+colNum].attributes[1].value = parseInt(cell[random+colNum].attributes[1].value)+1;
-				// cell[random+colNum].innerHTML = cell[random+colNum].attributes[1].value;
 			}
+
 			if(random-colNum>=0){
 				cell[random-colNum].attributes[1].value = parseInt(cell[random-colNum].attributes[1].value)+1;
-				// cell[random-colNum].innerHTML = cell[random-colNum].attributes[1].value;
 			}
+
 			if((random+1)%colNum!=0){
 				cell[random+1].attributes[1].value = parseInt(cell[random+1].attributes[1].value)+1;
-				// cell[random+1].innerHTML = cell[random+1].attributes[1].value;
 			}
+
 			if(random-1>=0 && random%colNum!=0){
 				cell[random-1].attributes[1].value = parseInt(cell[random-1].attributes[1].value)+1;
-				// cell[random-1].innerHTML = cell[random-1].attributes[1].value;
 			}
+
 			if((random+colNum+1)<size && (random+colNum+1)%colNum!=0){
 				cell[random+colNum+1].attributes[1].value = parseInt(cell[random+colNum+1].attributes[1].value)+1;
-				// cell[random+colNum+1].innerHTML = cell[random+colNum+1].attributes[1].value;
 			}
+
 			if((random+colNum-1)<size && (random+colNum)%colNum!=0){
 				cell[random+colNum-1].attributes[1].value = parseInt(cell[random+colNum-1].attributes[1].value)+1;
-				// cell[random+colNum-1].innerHTML = cell[random+colNum-1].attributes[1].value;
 			}
+
 			if((random-colNum+1)>=0 && (random-colNum+1)%colNum!=0){
 				cell[random-colNum+1].attributes[1].value = parseInt(cell[random-colNum+1].attributes[1].value)+1;
-				// cell[random-colNum+1].innerHTML = cell[random-colNum+1].attributes[1].value;
 			}
+
 			if((random-colNum-1)>=0 && (random-colNum)%colNum!=0){
 				cell[random-colNum-1].attributes[1].value = parseInt(cell[random-colNum-1].attributes[1].value)+1;
-				// cell[random-colNum-1].innerHTML = cell[random-colNum-1].attributes[1].value;
 			}
 		}
 
@@ -234,7 +287,6 @@ function assignMines(rows, cols, minesInput){
 
 	for(var j = 0;j<minesInput;j++){
 		document.getElementsByClassName('bomb')[j].attributes[1].value = 1000;
-		// document.getElementsByClassName('bomb')[j].innerHTML = document.getElementsByClassName('bomb')[j].attributes[1].value;
 	}
 }
 
