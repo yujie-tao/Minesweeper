@@ -1,8 +1,33 @@
+h1,h4,h6{
+	color: #020200;
+}
+
+h1{
+	font-family: 'VT323', monospace;
+}
+
+h4, h6{
+	font-family: 'Open Sans', sans-serif;
+}
+
+h4{
+	font-size: 14px;
+}
+
+.board h4{
+	font-weight: 600;
+	color: #FFBE03;
+}
+
+/*.slider h4, .mines-setup h4{
+	color: grey;
+}
+*/
 .cell{
     text-align : center;
-    width : 25px;
-    height : 25px;
-    background-color: grey;
+    width : 30px;
+    height : 30px;
+    background-color: #493804;
     border: 2px solid white;
 }
 
@@ -10,13 +35,70 @@
 	/*background-color: black;*/
 }
 
+/*Mode*/
 .bomb{
 	/*background-color:red;*/
 }
 .marked{
-	background-color: orange;
+	background-color: #FFBE03;
 }
 .cleared{
-	background-color: black;
+	background-color: #AF8608;
 	color: white;
+}
+/*.gameOver{
+	background-color: #020200;
+}*/
+
+/*Style*/
+.container{
+	text-align: center;
+}
+
+#minefield{
+	margin: auto;
+}
+
+.title{
+	color: #FFBE03;
+	/*background-color: #FFBE03;*/
+	margin-top:30px;
+}
+
+.mines-setup{
+	margin-bottom: 10px;
+}
+
+.controls{
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+.slider{
+	display: inline-block;
+}
+
+.playground{
+	margin-top: 20px;
+}
+
+#start-game{
+	background-color: #FFBE03;
+    color: white;
+    border: none;
+}
+
+input:focus { 
+	outline:0 !important; 
+}
+
+#start-game:hover{
+	cursor: pointer;
+}
+
+.board{
+	display: inline-block;
+	margin-left: 20px;
+	margin-right: 20px;
+	marign-top: 30px;
 }

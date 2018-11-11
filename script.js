@@ -24,6 +24,7 @@ $('input[id="start-game"]').click(function() {
 		minesNum.innerHTML=minesInput.value;
 		timer.resetWatch();
 		createTable("minefield", heightInput.value, widthInput.value, minesInput.value);
+		gamePlay();
 	}
 });
 
@@ -40,8 +41,10 @@ function gamePlay(){
 				minesNum.innerHTML=parseInt(minesNum.innerHTML)+1;
 				$(this).removeClass("marked");
 			}else{
-				$(this).addClass("marked");
-				minesNum.innerHTML=parseInt(minesNum.innerHTML)-1;
+				if($(this).hasClass('cleared') != true){
+					$(this).addClass("marked");
+					minesNum.innerHTML=parseInt(minesNum.innerHTML)-1;
+				}
 			}
 		}else{
 			if($(this).hasClass("marked")){
@@ -115,12 +118,24 @@ function gamePlay(){
 
     				}else{
     					$(this).addClass("cleared");
-    					this.innerHTML=this.attributes[1].value;
+    					if(this.attributes[1].value>0){
+    						this.innerHTML=this.attributes[1].value;
+    					}
     				}
     			}
 			}
     	}
+
+    	// arr = Array.from(document.getElementsByClassName('cell'))
+    
+    	// for (i = 0;i < var.length;i++){
+    	// 	if($(var[i]).hasClass('marked')&& $(var[i]).hasClass('marked')){
+    	// 	}
+    	// }
+
+
     });
+
 }
 
 
@@ -133,7 +148,9 @@ function checkBomb(index){
 
 	if($(arr[index]).hasClass('marked')!=true && ($(arr[index])).hasClass('bomb')!=true){
 		$(arr[index]).addClass("cleared");
-		arr[index].innerHTML=arr[index].attributes[1].value;
+		if(arr[index].attributes[1].value > 0){
+			arr[index].innerHTML=arr[index].attributes[1].value;
+		}
 	}
 
 }
@@ -142,6 +159,12 @@ function gameOver(mine){
 	timer.stop();
 	mine.innerHTML='b';
 	$(mine).css({'backgroundColor':'red', "color":"white"});
+	setTimeout( function(){
+		$('.cell').addClass('gameOver');
+		alert("Game Over")
+		location.reload();
+  }, 300 );
+
 }
 
 function createTable(minefield, rows, cols, minesInput) {
@@ -157,7 +180,7 @@ function createTable(minefield, rows, cols, minesInput) {
     $( "td" ).addClass( "cell" );
     $(".cell").attr("data-adjacent-bombs", 0);
     assignMines(rows,cols,minesInput);
-    gamePlay();
+    // gamePlay();
 }
 
 function assignMines(rows, cols, minesInput){

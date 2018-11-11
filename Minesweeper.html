@@ -4,6 +4,8 @@
 	<title>Minesweeper</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+   <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -17,11 +19,7 @@
 		<div class="row justify-content-center">
 			<div class="col-12 col-centered">
 				<h1 class="title">Minesweeper</h1>
-				<div class="timer"></div>
-				<div class="highest-score">
-					<h4>Highest Score</h4>
-				</div>
-				<div class="Controls">
+				<div class="controls">
 					<div class="slider">
 						<h4>Adjust width</h4>
 						<input type="range" min="8" max="40" value="8" id="width-input">
@@ -33,13 +31,31 @@
 						<h6 id="height-setting"></h6>
 					</div>
 					<div class="mines-setup">
-						<h4>Number of mines</h4>
+						<h4>Adjust # of mines</h4>
 						<input type="text" id="mines-input" value="1">
-						<h6 id="mines-setting"></h6>
+						<!-- <h6 id="mines-setting"></h6> -->
 					</div>
 
 					<input type="button" value="Start!" id="start-game">
 				</div>
+
+				<div class="board">
+					<h4>Timer</h4>
+					<h6><div class="timer"></div></h6>
+				</div>
+				
+				<div class="board">
+					<h4>Remaining Mines</h4>
+					<h6 id="mines-setting">0</h6>
+				</div>
+
+				<div class="board">
+					<div class="highest-score">
+						<h4>Highest Score</h4>
+						<h6 id="higest-score">0</h6>
+					</div>
+				</div>
+
 				<div class="playground">
 					<table id="minefield"></table>
 				</div>
