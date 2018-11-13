@@ -10,6 +10,7 @@ height.innerHTML = heightInput.value;
 createTable("minefield",heightInput.value, widthInput.value, minesInput.value)
 document.getElementsByClassName('score')[0].innerText = localStorage.getItem("highest-score");
 
+
 widthInput.oninput = function() {
     width.innerHTML = this.value;
 }
