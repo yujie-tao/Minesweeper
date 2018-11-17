@@ -33,6 +33,7 @@ input[type="range" i]{
     height : 30px;
     background-color: #493804;
     border: 2px solid white;
+    color: white;
 }
 
 .cell:hover{

@@ -116,7 +116,13 @@ function gamePlay(){
     					$(this).addClass("cleared");
     					if(this.attributes[1].value>0){
     						this.innerHTML=this.attributes[1].value;
-    					}
+    					}else{
+                            arr = Array.from(document.getElementsByClassName('cell'))
+                            var starting = arr.indexOf(this);
+                            ripple(this,starting);
+                            // ripple2(this,starting);
+                            // ripple3(this,starting);
+                        }
     				}
     			}
 			}
@@ -154,8 +160,123 @@ function gamePlay(){
 }
 
 
+function ripple(object,starting){
+    starting = starting;
+    arr = Array.from(document.getElementsByClassName('cell'))
+    colNum = parseInt(widthInput.value);
+    rowNum = parseInt(heightInput.value);
+    size = colNum*rowNum;
+    indexSel = arr.indexOf(object);
+
+    if((starting+1)%colNum!=0){
+        if((indexSel+1)%colNum!=0 && $(arr[indexSel+1]).hasClass("cleared")!=true && $(arr[indexSel+1]).hasClass("marked")!=true){
+            console.log('hello1')
+            console.log(indexSel+1)
+            checkSafe(indexSel+1,starting,1);
+        }else if((indexSel+1)%colNum==0){
+            console.log(starting)
+            ripple(arr[starting],starting)
+        }
+    }
+
+    if((starting-1)>=0 && starting%colNum!=0 ){
+        if(indexSel-1>=0 && indexSel%colNum!=0 && $(arr[indexSel-1]).hasClass("cleared")!=true && $(arr[indexSel-1]).hasClass("marked")!=true){
+            console.log('hello3')
+            checkSafe(indexSel-1,starting,1);
+        }else if(indexSel-1<0 || indexSel%colNum==0){
+            ripple(arr[starting],starting)
+        }
+    }
+
+    if(starting-colNum>=0){
+        if(indexSel-colNum>=0 && $(arr[indexSel-colNum]).hasClass("cleared")!=true){
+            console.log('hello4')
+            checkSafe(indexSel-colNum,starting,1)
+        }else if(indexSel-colNum<0){
+            console.log(starting)
+            ripple(arr[starting],starting)
+        }
+    }
+    if(indexSel+colNum<size && $(arr[indexSel+colNum]).hasClass("cleared")!=true){
+        checkSafe(indexSel+colNum,starting,1);
+    }
+
+    if((indexSel+colNum+1)<size && (indexSel+colNum+1)%colNum!=0){
+        checkSafe(indexSel+colNum+1);
+    }
+    if((indexSel+colNum-1)<size && (indexSel+colNum)%colNum){
+        checkSafe(indexSel+colNum-1);
+    }
+    if((indexSel-colNum+1)>=0 && (indexSel-colNum+1)%colNum!=0){
+        checkSafe(indexSel-colNum+1);
+    }
+    if((indexSel-colNum-1)>=0 && (indexSel-colNum)%colNum!=0){
+        checkSafe(indexSel-colNum-1)
+    }
+}
+
+function ripple2(object,starting){ 
+    starting = starting;
+    arr = Array.from(document.getElementsByClassName('cell'))
+    colNum = parseInt(widthInput.value);
+    rowNum = parseInt(heightInput.value);
+    size = colNum*rowNum;
+    indexSel = arr.indexOf(object);
+    if(starting-colNum>=0){
+        if(indexSel-colNum>=0 && $(arr[indexSel-colNum]).hasClass("cleared")!=true){
+            checkSafe(indexSel-colNum,starting,2)
+        }else if(indexSel-colNum<0){
+            ripple2(arr[starting],starting)
+        }
+    }
+    if(indexSel+colNum<size && $(arr[indexSel+colNum]).hasClass("cleared")!=true){
+        checkSafe(indexSel+colNum,starting,2);
+    }
+}
+
+function ripple3(object,starting){ 
+    if((indexSel+colNum+1)<size && (indexSel+colNum+1)%colNum!=0 && $(arr[indexSel-colNum+1]).hasClass("cleared")!=true){
+        checkSafe(indexSel+colNum+1);
+    }else if((indexSel+colNum+1)>size | (indexSel+colNum+1)%colNum!=0){
+        ripple(arr[starting],starting)
+    }
+    if((indexSel+colNum-1)<size && (indexSel+colNum)%colNum && $(arr[indexSel+colNum-1]).hasClass("cleared")!=true){
+        checkSafe(indexSel+colNum-1);
+    }
+}
+
+function checkSafe(index,starting,mode){
+    starting=starting;
+    arr = Array.from(document.getElementsByClassName('cell'))
+    if($(arr[index]).hasClass('marked')!=true && parseInt(arr[index].attributes[1].value)>0 && $(arr[index]).hasClass('bomb')!=true){
+        console.log('wow')
+        $(arr[index]).addClass("cleared");
+        arr[index].innerHTML=arr[index].attributes[1].value;
+        if(mode ==1){
+                ripple(arr[starting],starting)
+            }else{
+                if(mode==2){
+                   // ripple2(arr[starting],starting)
+                }
+            }
+    }else{
+        if($(arr[index]).hasClass('marked')!=true && parseInt(arr[index].attributes[1].value)==0){
+            console.log('hello2')
+            $(arr[index]).addClass("cleared");
+            console.log(index)
+            if(mode ==1){
+                ripple(arr[index],starting)
+            }else{
+                if(mode==2){
+                   // ripple2(arr[index],starting)
+                }
+            }
+        }
+    }
+}
+
+
 function checkBomb(index){
-	// gameOver = false;
 	arr = Array.from(document.getElementsByClassName('cell'))
 	if($(arr[index]).hasClass('marked')!=true && ($(arr[index])).hasClass('bomb')==true){
 		gameOver(arr[index]);
@@ -179,7 +300,7 @@ function gameOver(mine){
 			arr[i].innerHTML='x';
 			$(arr[i]).css({'backgroundColor':'red', "color":"white"});
 		}else{
-			if(arr[i].attributes[1].value>1){
+			if(arr[i].attributes[1].value>0){
 				arr[i].innerHTML=arr[i].attributes[1].value;
 			}
 			$(arr[i]).addClass('cleared');
@@ -371,3 +492,4 @@ function pad0(value, count) {
 
 let timer = new Timer(
     document.querySelector('.timer'));
+
