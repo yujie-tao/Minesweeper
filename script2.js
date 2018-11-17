@@ -1,40 +1,140 @@
 // Controls Setup
-var widthInput = document.getElementById("width-input");
-var width = document.getElementById("width-setting");
-var heightInput = document.getElementById("height-input");
-var height = document.getElementById("height-setting");
-var minesNum = document.getElementById("mines-setting")
-var minesInput = document.getElementById("mines-input");
-width.innerHTML = widthInput.value; 
-height.innerHTML = heightInput.value; 
+
+$(function(){
+    var widthInput = document.getElementById("width-input");
+    var width = document.getElementById("width-setting");
+    var heightInput = document.getElementById("height-input");
+    var height = document.getElementById("height-setting");
+    var minesNum = document.getElementById("mines-setting")
+    var minesInput = document.getElementById("mines-input");
+    width.innerHTML = widthInput.value; 
+    height.innerHTML = heightInput.value; 
 
 
-widthInput.oninput = function() {
-    width.innerHTML = this.value;
-}
+    widthInput.oninput = function() {
+        width.innerHTML = this.value;
+    }
 
-heightInput.oninput = function() {
-    height.innerHTML = this.value;
-}
+    heightInput.oninput = function() {
+        height.innerHTML = this.value;
+    }
 
+    var playground = createTable(heightInput.value, widthInput.value, minesInput.value);
 
-class cell{
+    $('input[id="start-game"]').click(function() {
+        if(minesInput.value > heightInput.value*widthInput.value-1){
+            alert("Mission impossible")
+        }else{
+            minesNum.innerHTML=minesInput.value;
+            timer.resetWatch();
+            playground = createTable(heightInput.value, widthInput.value, minesInput.value);
+            gamePlay();
+        }
+    });
+
+    function createTable(row, column, minesInput){
+        var playground = new PlayGround(row, column, minesInput);
+        var i,j,
+            cells = [];
+        for (i = 0; i < row; i++){
+            cells.push(`<tr id="row-${i}">`);
+            for(j = 0; j < column; j++)
+                cells.push(`<td id="cell-${i}-${j}" 
+                    class="cell">${playground.getAdjacentCount(i,j)}</td>`);
+            cells.push("</tr>");
+        }
+
+        $('#minefield').html(cells.join(""))
+        return playground;
+    }
+
+    function gamePlay(){
+        $(".cell").click(function(){
+            timer.start();
+            rowIndex = $(this).attr("id").split("-")[1];
+            colIndex = $(this).attr("id").split("-")[2];
+            if(event.shiftKey){
+                if(playground.getFlagged(rowIndex,colIndex)){
+                    playground.setFlagged(rowIndex,colIndex,false);
+                    $(this).removeClass("marked");
+                }else{
+                    playground.setFlagged(rowIndex,colIndex,true);
+                    $(this).addClass("marked");
+                }
+            }else{
+                if(playground.getBomb(rowIndex,colIndex)){
+                    gameOver();
+                }else{
+                    if(playground.getAdjacentCount(rowIndex,colIndex)>0){ 
+                        playground.setCleared(rowIndex,colIndex);
+                        $(this).addClass("cleared");
+                    }else{
+                        ripple(rowIndex,colIndex);
+                        // console.log(rows)
+                        // console.log(columns)
+                    }
+                }
+            }
+        });
+    }
+
+    function ripple(rowIndex,colIndex){
+        var rowIndex = parseInt(rowIndex);
+        var colIndex = parseInt(colIndex);
+        var rows = heightInput.value;
+        var columns = widthInput.value;
+        // console.log(rows)
+        // console.log(columns)
+        // console.log(rowIndex)
+        // console.log(colIndex)
+        $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+        if(playground.getAdjacentCount(rowIndex,colIndex)>0){
+             playground.setCleared(rowIndex,colIndex);
+             $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+             return;
+        }
+        for(var rowCheck=-1;rowCheck<=1;rowCheck++){
+            // console.log('hello')
+            for(var colCheck=-1;colCheck<=1;colCheck++){
+                // console.log(rowCheck+rowIndex)
+                if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
+                    if(rowCheck==0&&colCheck==0){
+                        continue;
+                    }
+
+                    if($('#cell-'+(rowIndex+rowCheck)+'-'+(colIndex+colCheck)).hasClass("cleared")==true){
+                        continue;
+                    }
+                    ripple(rowIndex+rowCheck,colIndex+colCheck);
+                    
+                }
+            }
+        }       
+    }
+
+    function gameOver(){
+        timer.stop();
+        setTimeout( function(){
+            alert("Game Over")
+            location.reload();
+        }, 300 );
+    }
+
+})
+
+class Cell{
     constructor(row_index, col_index){
         this.col_index = col_index;
         this.row_index = row_index;
         this.cleared = false;
         this.bomb = false;
-        this.flaged = false;
+        this.flagged = false;
         this.adj_bomb_count = 0;
-    }
-
-    getAdjacentCount(){
-        return this.adj_bomb_count;
     }
 
 }
 
-class playGround{
+class PlayGround{
     constructor(row,column, mineNum){
         var playground = new Array(row);
         var mineInsert = mineNum;
@@ -45,7 +145,7 @@ class playGround{
 
         for(var i=0;i<row;i++){
             for(var j=0;j<column;j++){
-                playground[i][j] = new cell(i,j);
+                playground[i][j] = new Cell(i,j);
             }
         }
         while(mineInsert>0){
@@ -55,7 +155,6 @@ class playGround{
                 playground[randRow][randCol].bomb = true;
                 for(var rowCheck=-1;rowCheck<=1;rowCheck++){
                     for(var colCheck=-1;colCheck<=1;colCheck++){
-                        console.log('hello')
                         if(randRow+rowCheck>=0 && randRow+rowCheck<row && randCol+colCheck>=0 && randCol+colCheck<column){
                             playground[randRow+rowCheck][randCol+colCheck].adj_bomb_count++;
                         }
@@ -69,9 +168,30 @@ class playGround{
         this.playground = playground;
     }
 
+    getBomb(row,column,status){
+        return this.playground[row][column].bomb;
+    }
+
     getAdjacentCount(row,column){
         return this.playground[row][column].adj_bomb_count;
     }
+
+    getFlagged(row,column){
+        return this.playground[row][column].flagged;
+    }
+
+    setFlagged(row,column,status){
+        this.playground[row][column].flagged=status;
+    }
+
+    getCleared(row,column){
+        return this.playground[row][column].cleared;
+    }
+
+    setCleared(row,column){
+        this.playground[row][column].cleared=true;
+    }
+
 }
 
 
@@ -154,34 +274,4 @@ function pad0(value, count) {
 
 let timer = new Timer(
     document.querySelector('.timer'));
-
-
-
-
-function createTable(row, column, minesInput){
-    var playground = new playGround(row, column, minesInput);
-    var i,j,
-        cells = [];
-    for (i = 0; i < row; i++){
-        cells.push(`<tr id="row-${i}">`);
-        for(j = 0; j < column; j++)
-            cells.push(`<td id="cell-${i}-${j}" 
-                class="cell">${playground.getAdjacentCount(i,j)}</td>`);
-        cells.push("</tr>");
-    }
-
-    $('#minefield').html(cells.join(""))
-}
-
-
-$('input[id="start-game"]').click(function() {
-    if(minesInput.value > heightInput.value*widthInput.value-1){
-        alert("Mission impossible")
-    }else{
-        minesNum.innerHTML=minesInput.value;
-        timer.resetWatch();
-        createTable(heightInput.value, widthInput.value, minesInput.value);
-    }
-});
-
 
