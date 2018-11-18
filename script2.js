@@ -1,5 +1,4 @@
 // Controls Setup
-
 $(function(){
     var widthInput = document.getElementById("width-input");
     var width = document.getElementById("width-setting");
@@ -20,6 +19,8 @@ $(function(){
     }
 
     var playground = createTable(heightInput.value, widthInput.value, minesInput.value);
+    var rows = heightInput.value;
+    var columns = widthInput.value;
 
     $('input[id="start-game"]').click(function() {
         if(minesInput.value > heightInput.value*widthInput.value-1){
@@ -28,6 +29,8 @@ $(function(){
             minesNum.innerHTML=minesInput.value;
             timer.resetWatch();
             playground = createTable(heightInput.value, widthInput.value, minesInput.value);
+            rows = heightInput.value;
+            columns = widthInput.value;
             gamePlay();
         }
     });
@@ -62,41 +65,74 @@ $(function(){
                     $(this).addClass("marked");
                 }
             }else{
-                if(playground.getBomb(rowIndex,colIndex)){
+                if(playground.getBomb(rowIndex,colIndex)&&playground.getFlagged(rowIndex,colIndex)==false){
                     gameOver();
-                }else{
-                    if(playground.getAdjacentCount(rowIndex,colIndex)>0){ 
+                }
+
+                if(playground.getAdjacentCount(rowIndex,colIndex)>0 && playground.getFlagged(rowIndex,colIndex)==false){ 
+                    if(playground.getCleared(rowIndex,colIndex)==true){
+                        checkAround(rowIndex,colIndex);
+                    }else{
                         playground.setCleared(rowIndex,colIndex);
                         $(this).addClass("cleared");
-                    }else{
-                        ripple(rowIndex,colIndex);
-                        // console.log(rows)
-                        // console.log(columns)
                     }
+                }
+
+                if(playground.getAdjacentCount(rowIndex,colIndex)==0){
+                    ripple(rowIndex,colIndex);
                 }
             }
         });
     }
 
+    function checkAround(rowIndex,colIndex){
+        var flags=0;
+        var rowIndex = parseInt(rowIndex);
+        var colIndex = parseInt(colIndex);
+        for(var rowCheck=-1;rowCheck<=1;rowCheck++){
+            for(var colCheck=-1;colCheck<=1;colCheck++){
+                if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
+                    console.log(rowIndex+rowCheck)
+                    console.log(colIndex+colCheck)
+                    if(playground.getFlagged(rowIndex+rowCheck,colIndex+colCheck)){
+                        flags++;
+                    }
+                }    
+            }
+        }
+        if(flags==playground.getAdjacentCount(rowIndex,colIndex)){
+            for(var rowCheck=-1;rowCheck<=1;rowCheck++){
+                for(var colCheck=-1;colCheck<=1;colCheck++){
+                    if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
+                        if(rowIndex!=0&&colIndex!=0 && playground.getCleared(rowIndex+rowCheck,colIndex+colCheck)==false){
+                            $('#cell-'+(rowIndex+rowCheck)+'-'+(colIndex+colCheck)).click();
+                        }
+                    }    
+                }
+            }
+        }
+    }
+
     function ripple(rowIndex,colIndex){
         var rowIndex = parseInt(rowIndex);
         var colIndex = parseInt(colIndex);
-        var rows = heightInput.value;
-        var columns = widthInput.value;
-        // console.log(rows)
-        // console.log(columns)
-        // console.log(rowIndex)
-        // console.log(colIndex)
-        $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+
+        console.log(rows)
+        console.log(columns)
+
+        if(playground.getFlagged(rowIndex,colIndex)==false){
+            $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+            playground.setCleared(rowIndex,colIndex);
+        }
         if(playground.getAdjacentCount(rowIndex,colIndex)>0){
-             playground.setCleared(rowIndex,colIndex);
-             $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+            if(playground.getFlagged(rowIndex,colIndex)==false){
+                playground.setCleared(rowIndex,colIndex);
+                $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+            }
              return;
         }
         for(var rowCheck=-1;rowCheck<=1;rowCheck++){
-            // console.log('hello')
             for(var colCheck=-1;colCheck<=1;colCheck++){
-                // console.log(rowCheck+rowIndex)
                 if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
                     if(rowCheck==0&&colCheck==0){
                         continue;
@@ -106,7 +142,6 @@ $(function(){
                         continue;
                     }
                     ripple(rowIndex+rowCheck,colIndex+colCheck);
-                    
                 }
             }
         }       
