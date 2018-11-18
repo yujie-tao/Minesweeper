@@ -23,6 +23,11 @@ input[type="range" i]{
 	color: #FFBE03;
 }
 
+.board h6{
+	height: 19px;
+	overflow: hidden;
+}
+
 .slider h4, .mines-setup h4{
 	font-weight: 600;
 }
@@ -113,7 +118,7 @@ input[type="range" i]{
 }
 
 .playground{
-	margin-top: 20px;
+	margin-top: 10px;
 }
 
 #start-game{

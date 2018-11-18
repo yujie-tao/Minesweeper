@@ -1,4 +1,3 @@
-// Controls Setup
 $(function(){
     var widthInput = document.getElementById("width-input");
     var width = document.getElementById("width-setting");
@@ -7,8 +6,13 @@ $(function(){
     var minesNum = document.getElementById("mines-setting")
     var minesInput = document.getElementById("mines-input");
     width.innerHTML = widthInput.value; 
-    height.innerHTML = heightInput.value; 
-
+    height.innerHTML = heightInput.value;
+    // localStorage.setItem("highest-score", "--:--");
+    // localStorage.setItem("highest-score1", "--:--");
+    // localStorage.setItem("highest-score2", "--:--");
+    document.getElementsByClassName('score')[0].innerText = localStorage.getItem("highest-score");
+    document.getElementsByClassName('score1')[0].innerText = localStorage.getItem("highest-score1");
+    document.getElementsByClassName('score2')[0].innerText = localStorage.getItem("highest-score2");
 
     widthInput.oninput = function() {
         width.innerHTML = this.value;
@@ -59,10 +63,8 @@ $(function(){
             if(event.shiftKey){
                 if(playground.getFlagged(rowIndex,colIndex)){
                     playground.setFlagged(rowIndex,colIndex,false);
-                    // $(this).removeClass("marked");
                 }else{
                     playground.setFlagged(rowIndex,colIndex,true);
-                    // $(this).addClass("marked");
                 }
             }else{
                 if(playground.getBomb(rowIndex,colIndex)&&playground.getFlagged(rowIndex,colIndex)==false){
@@ -75,7 +77,6 @@ $(function(){
                             checkAround(rowIndex,colIndex);
                         }else{
                             playground.setCleared(rowIndex,colIndex);
-                            // $(this).addClass("cleared");
                         }
                     }
                     if(playground.getAdjacentCount(rowIndex,colIndex)==0){
@@ -122,7 +123,6 @@ $(function(){
         var colIndex = parseInt(colIndex);
 
         if(playground.getFlagged(rowIndex,colIndex)==false){
-            // $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
             playground.setCleared(rowIndex,colIndex);
         }
         if(playground.getAdjacentCount(rowIndex,colIndex)>0){
@@ -144,9 +144,6 @@ $(function(){
                         continue;
                     }
 
-                    // if($('#cell-'+(rowIndex+rowCheck)+'-'+(colIndex+colCheck)).hasClass("cleared")==true){
-                    //     continue;
-                    // }
                     ripple(rowIndex+rowCheck,colIndex+colCheck);
                 }
             }
@@ -172,6 +169,28 @@ $(function(){
 
     function gameWin(){
         timer.stop();
+        var cur = document.getElementsByClassName('timer')[0].innerText.split(":");
+        var record= localStorage.getItem("highest-score").split(":");
+        var record1= localStorage.getItem("highest-score1").split(":");
+        var record2= localStorage.getItem("highest-score2").split(":");
+
+        if(parseInt(cur[0])<parseInt(record[0]) || (parseInt(cur[0])==parseInt(record[0]) && parseInt(cur[1])<parseInt(record[1])) || record[0]=="--" && record[1]=="--"){
+            localStorage.setItem("highest-score2", localStorage.getItem("highest-score1"));
+            localStorage.setItem("highest-score1", localStorage.getItem("highest-score"));
+            localStorage.setItem("highest-score", document.getElementsByClassName('timer')[0].innerText);
+        }else{
+             if(parseInt(cur[0])<parseInt(record1[0]) || (parseInt(cur[0])==parseInt(record1[0]) && parseInt(cur[1])<parseInt(record1[1])) || record1[0]=="--" && record1[1]=="--"){
+                localStorage.setItem("highest-score2", localStorage.getItem("highest-score1"));
+                 localStorage.setItem("highest-score1", document.getElementsByClassName('timer')[0].innerText);
+             }else{
+                if(parseInt(cur[0])<parseInt(record2[0]) || (parseInt(cur[0])==parseInt(record2[0]) && parseInt(cur[1])<parseInt(record2[1])) || record2[0]=="--" && record2[1]=="--"){
+                     localStorage.setItem("highest-score2", document.getElementsByClassName('timer')[0].innerText);
+                 }
+             }
+        }
+
+
+
         setTimeout( function(){
             alert("You Win")
             location.reload();
@@ -240,7 +259,6 @@ class PlayGround{
                     }
                 }
                 playground[randRow][randCol].adj_bomb_count=1000;
-                // console.log('hello')
                 mineInsert--;
             }
         }
@@ -263,8 +281,10 @@ class PlayGround{
         this.playground[row][column].flagged=status;
         if(status==true){
             $('#cell-'+row+'-'+column).addClass("marked");
+            document.getElementById("mines-setting").innerHTML=parseInt(document.getElementById("mines-setting").innerHTML)-1;
         }else{
             $('#cell-'+row+'-'+column).removeClass("marked");
+            document.getElementById("mines-setting").innerHTML=parseInt(document.getElementById("mines-setting").innerHTML)+1;
         }
     }
 
@@ -359,4 +379,3 @@ function pad0(value, count) {
 
 let timer = new Timer(
     document.querySelector('.timer'));
-
