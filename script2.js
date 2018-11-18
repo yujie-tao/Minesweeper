@@ -43,7 +43,7 @@ $(function(){
             cells.push(`<tr id="row-${i}">`);
             for(j = 0; j < column; j++)
                 cells.push(`<td id="cell-${i}-${j}" 
-                    class="cell">${playground.getAdjacentCount(i,j)}</td>`);
+                    class="cell"></td>`);
             cells.push("</tr>");
         }
 
@@ -59,29 +59,32 @@ $(function(){
             if(event.shiftKey){
                 if(playground.getFlagged(rowIndex,colIndex)){
                     playground.setFlagged(rowIndex,colIndex,false);
-                    $(this).removeClass("marked");
+                    // $(this).removeClass("marked");
                 }else{
                     playground.setFlagged(rowIndex,colIndex,true);
-                    $(this).addClass("marked");
+                    // $(this).addClass("marked");
                 }
             }else{
                 if(playground.getBomb(rowIndex,colIndex)&&playground.getFlagged(rowIndex,colIndex)==false){
+                    $('#cell-'+rowIndex+'-'+colIndex).text('x');
                     gameOver();
-                }
-
-                if(playground.getAdjacentCount(rowIndex,colIndex)>0 && playground.getFlagged(rowIndex,colIndex)==false){ 
-                    if(playground.getCleared(rowIndex,colIndex)==true){
-                        checkAround(rowIndex,colIndex);
-                    }else{
-                        playground.setCleared(rowIndex,colIndex);
-                        $(this).addClass("cleared");
+                }else{
+                    if(playground.getAdjacentCount(rowIndex,colIndex)>0 && playground.getFlagged(rowIndex,colIndex)==false){
+                        $('#cell-'+rowIndex+'-'+colIndex).text(playground.getAdjacentCount(rowIndex,colIndex)); 
+                        if(playground.getCleared(rowIndex,colIndex)==true){
+                            checkAround(rowIndex,colIndex);
+                        }else{
+                            playground.setCleared(rowIndex,colIndex);
+                            // $(this).addClass("cleared");
+                        }
+                    }
+                    if(playground.getAdjacentCount(rowIndex,colIndex)==0){
+                        ripple(rowIndex,colIndex);
                     }
                 }
-
-                if(playground.getAdjacentCount(rowIndex,colIndex)==0){
-                    ripple(rowIndex,colIndex);
-                }
             }
+
+            checkWin();
         });
     }
 
@@ -100,6 +103,7 @@ $(function(){
                 }    
             }
         }
+
         if(flags==playground.getAdjacentCount(rowIndex,colIndex)){
             for(var rowCheck=-1;rowCheck<=1;rowCheck++){
                 for(var colCheck=-1;colCheck<=1;colCheck++){
@@ -117,17 +121,15 @@ $(function(){
         var rowIndex = parseInt(rowIndex);
         var colIndex = parseInt(colIndex);
 
-        console.log(rows)
-        console.log(columns)
-
         if(playground.getFlagged(rowIndex,colIndex)==false){
-            $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+            // $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
             playground.setCleared(rowIndex,colIndex);
         }
         if(playground.getAdjacentCount(rowIndex,colIndex)>0){
             if(playground.getFlagged(rowIndex,colIndex)==false){
                 playground.setCleared(rowIndex,colIndex);
                 $('#cell-'+rowIndex+'-'+colIndex).addClass("cleared");
+                $('#cell-'+rowIndex+'-'+colIndex).text(playground.getAdjacentCount(rowIndex,colIndex));
             }
              return;
         }
@@ -138,17 +140,59 @@ $(function(){
                         continue;
                     }
 
-                    if($('#cell-'+(rowIndex+rowCheck)+'-'+(colIndex+colCheck)).hasClass("cleared")==true){
+                    if(playground.getCleared(rowIndex+rowCheck,colIndex+colCheck)){
                         continue;
                     }
+
+                    // if($('#cell-'+(rowIndex+rowCheck)+'-'+(colIndex+colCheck)).hasClass("cleared")==true){
+                    //     continue;
+                    // }
                     ripple(rowIndex+rowCheck,colIndex+colCheck);
                 }
             }
         }       
     }
 
+    function checkWin(){
+        for(var i=0;i<rows;i++){
+            for(var j=0;j<columns;j++){
+                if(playground.getBomb(i,j)&&playground.getFlagged(i,j)==false){
+                    return;
+                }
+                if(playground.getBomb(i,j)==false&&playground.getFlagged(i,j)){
+                    return;
+                }
+                if(playground.getBomb(i,j)==false&&playground.getCleared(i,j)==false){
+                    return;
+                }
+            }
+        }
+        gameWin();
+    }
+
+    function gameWin(){
+        timer.stop();
+        setTimeout( function(){
+            alert("You Win")
+            location.reload();
+        }, 300 );
+
+    }
+
     function gameOver(){
         timer.stop();
+        for(var i=0;i<rows;i++){
+                for(var j=0;j<columns;j++){
+                    if(playground.getBomb(i,j)){
+                        $('#cell-'+i+'-'+j).addClass('bomb'); 
+                    }else{
+                        $('#cell-'+i+'-'+j).addClass('cleared'); 
+                        if(playground.getAdjacentCount(i,j)>0){
+                            $('#cell-'+i+'-'+j).text(playground.getAdjacentCount(i,j));
+                        }
+                    }
+                }
+            }
         setTimeout( function(){
             alert("Game Over")
             location.reload();
@@ -217,6 +261,11 @@ class PlayGround{
 
     setFlagged(row,column,status){
         this.playground[row][column].flagged=status;
+        if(status==true){
+            $('#cell-'+row+'-'+column).addClass("marked");
+        }else{
+            $('#cell-'+row+'-'+column).removeClass("marked");
+        }
     }
 
     getCleared(row,column){
@@ -225,6 +274,7 @@ class PlayGround{
 
     setCleared(row,column){
         this.playground[row][column].cleared=true;
+        $('#cell-'+row+'-'+column).addClass("cleared");
     }
 
 }

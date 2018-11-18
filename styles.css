@@ -41,15 +41,16 @@ input[type="range" i]{
 }
 
 /*Mode*/
-.bomb{
-	/*background-color:red;*/
-}
 .marked{
 	background-color: #FFBE03;
 }
 .cleared{
 	background-color: #AF8608;
 	color: white;
+}
+
+.bomb{
+	background-color:red;
 }
 
 
