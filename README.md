@@ -1,6 +1,6 @@
 # Minesweeper
 This is a minesweeper game in Javascript. 
-[Demo link](http://yujietao.me/minesweeper/)
+[Demo](http://yujietao.me/minesweeper/)
 
 ## Keyboard shortcut
 
