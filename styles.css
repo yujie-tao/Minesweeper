@@ -1,7 +1,4 @@
-h1,h4,h6{
-	color: #493804;
-}
-
+/*Global*/
 h1{
 	font-family: 'VT323', monospace;
 }
@@ -14,24 +11,16 @@ h4{
 	font-size: 14px;
 }
 
-input[type="range" i]{
-
+h1,h4,h6{
+	color: #493804;
 }
 
-.board h4{
-	font-weight: 600;
-	color: #FFBE03;
+input:focus { 
+	outline:0 !important; 
 }
 
-.board h6{
-	height: 19px;
-	overflow: hidden;
-}
 
-.slider h4, .mines-setup h4{
-	font-weight: 600;
-}
-
+/*Modes*/
 .cell{
     text-align : center;
     width : 30px;
@@ -41,11 +30,6 @@ input[type="range" i]{
     color: white;
 }
 
-.cell:hover{
-	/*background-color: black;*/
-}
-
-/*Mode*/
 .marked{
 	background-color: #FFBE03;
 }
@@ -60,6 +44,28 @@ input[type="range" i]{
 
 
 /*Style*/
+.title{
+	color: #FFBE03;
+	margin-top:30px;
+}
+
+.container{
+	text-align: center;
+}
+
+.mines-setup{
+	margin-bottom: 10px;
+}
+
+.slider h4, .mines-setup h4{
+	font-weight: 600;
+}
+
+.controls{
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
 .bar {
     -webkit-appearance: none;
     width: 100%;
@@ -90,29 +96,6 @@ input[type="range" i]{
     cursor: pointer;
 }
 
-.container{
-	text-align: center;
-}
-
-#minefield{
-	margin: auto;
-}
-
-.title{
-	color: #FFBE03;
-	/*background-color: #FFBE03;*/
-	margin-top:30px;
-}
-
-.mines-setup{
-	margin-bottom: 10px;
-}
-
-.controls{
-	margin-top: 40px;
-	margin-bottom: 40px;
-}
-
 .slider{
 	display: inline-block;
 }
@@ -121,18 +104,15 @@ input[type="range" i]{
 	margin-top: 10px;
 }
 
-#start-game{
-	background-color: #FFBE03;
-    color: white;
-    border: none;
+
+.board h4{
+	font-weight: 600;
+	color: #FFBE03;
 }
 
-input:focus { 
-	outline:0 !important; 
-}
-
-#start-game:hover{
-	cursor: pointer;
+.board h6{
+	height: 19px;
+	overflow: hidden;
 }
 
 .board{
@@ -140,4 +120,18 @@ input:focus {
 	margin-left: 20px;
 	margin-right: 20px;
 	marign-top: 30px;
+}
+
+#minefield{
+	margin: auto;
+}
+
+#start-game{
+	background-color: #FFBE03;
+    color: white;
+    border: none;
+}
+
+#start-game:hover{
+	cursor: pointer;
 }

@@ -17,7 +17,9 @@ $(function(){
         height.innerHTML = this.value;
     }
 
-    var playground = createTable(heightInput.value, widthInput.value, minesInput.value);
+    var playground = createTable(heightInput.value, 
+                                widthInput.value, 
+                                minesInput.value);
     var rows = heightInput.value;
     var columns = widthInput.value;
 
@@ -27,7 +29,9 @@ $(function(){
         }else{
             minesNum.innerHTML=minesInput.value;
             timer.resetWatch();
-            playground = createTable(heightInput.value, widthInput.value, minesInput.value);
+            playground = createTable(heightInput.value, 
+                                    widthInput.value, 
+                                    minesInput.value);
             rows = heightInput.value;
             columns = widthInput.value;
             gamePlay();
@@ -64,12 +68,15 @@ $(function(){
                     }
                 }
             }else{
-                if(playground.getBomb(rowIndex,colIndex)&&playground.getFlagged(rowIndex,colIndex)==false){
+                if(playground.getBomb(rowIndex,colIndex)
+                    &&playground.getFlagged(rowIndex,colIndex)==false){
                     $('#cell-'+rowIndex+'-'+colIndex).text('x');
                     gameOver();
                 }else{
-                    if(playground.getAdjacentCount(rowIndex,colIndex)>0 && playground.getFlagged(rowIndex,colIndex)==false){
-                        $('#cell-'+rowIndex+'-'+colIndex).text(playground.getAdjacentCount(rowIndex,colIndex)); 
+                    if(playground.getAdjacentCount(rowIndex,colIndex)>0 && 
+                        playground.getFlagged(rowIndex,colIndex)==false){
+                        $('#cell-'+rowIndex+'-'+colIndex).text(playground.
+                            getAdjacentCount(rowIndex,colIndex)); 
                         if(playground.getCleared(rowIndex,colIndex)==true){
                             checkAround(rowIndex,colIndex);
                         }else{
@@ -92,22 +99,35 @@ $(function(){
         var colIndex = parseInt(colIndex);
         for(var rowCheck=-1;rowCheck<=1;rowCheck++){
             for(var colCheck=-1;colCheck<=1;colCheck++){
-                if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
-                    console.log(rowIndex+rowCheck)
-                    console.log(colIndex+colCheck)
-                    if(playground.getFlagged(rowIndex+rowCheck,colIndex+colCheck)){
+                if(rowIndex+rowCheck>=0 
+                    && rowIndex+rowCheck<rows 
+                    && colIndex+colCheck>=0 
+                    && colIndex+colCheck<columns){
+                    if(playground.getFlagged(rowIndex+rowCheck,
+                        colIndex+colCheck)){
                         flags++;
                     }
                 }    
             }
         }
 
+        console.log(flags);
         if(flags==playground.getAdjacentCount(rowIndex,colIndex)){
             for(var rowCheck=-1;rowCheck<=1;rowCheck++){
                 for(var colCheck=-1;colCheck<=1;colCheck++){
-                    if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
-                        if(rowIndex!=0&&colIndex!=0 && playground.getCleared(rowIndex+rowCheck,colIndex+colCheck)==false){
-                            $('#cell-'+(rowIndex+rowCheck)+'-'+(colIndex+colCheck)).click();
+                    if(rowIndex+rowCheck>=0 
+                        && rowIndex+rowCheck<rows 
+                        && colIndex+colCheck>=0 
+                        && colIndex+colCheck<columns){
+                        var itself=false;
+                        if(rowCheck==0&&colCheck==0){
+                            itself=true;
+                        }
+                        if(itself==false 
+                            && playground.getCleared(rowIndex+rowCheck,
+                                colIndex+colCheck)==false){
+                            $('#cell-'+(rowIndex+rowCheck)+'-'
+                                +(colIndex+colCheck)).click();
                         }
                     }    
                 }
@@ -132,12 +152,16 @@ $(function(){
         }
         for(var rowCheck=-1;rowCheck<=1;rowCheck++){
             for(var colCheck=-1;colCheck<=1;colCheck++){
-                if(rowIndex+rowCheck>=0 && rowIndex+rowCheck<rows && colIndex+colCheck>=0 && colIndex+colCheck<columns){
+                if(rowIndex+rowCheck>=0 
+                    && rowIndex+rowCheck<rows 
+                    && colIndex+colCheck>=0 
+                    && colIndex+colCheck<columns){
                     if(rowCheck==0&&colCheck==0){
                         continue;
                     }
 
-                    if(playground.getCleared(rowIndex+rowCheck,colIndex+colCheck)){
+                    if(playground.getCleared(rowIndex+rowCheck,
+                        colIndex+colCheck)){
                         continue;
                     }
 
@@ -150,13 +174,16 @@ $(function(){
     function checkWin(){
         for(var i=0;i<rows;i++){
             for(var j=0;j<columns;j++){
-                if(playground.getBomb(i,j)&&playground.getFlagged(i,j)==false){
+                if(playground.getBomb(i,j)
+                    &&playground.getFlagged(i,j)==false){
                     return;
                 }
-                if(playground.getBomb(i,j)==false&&playground.getFlagged(i,j)){
+                if(playground.getBomb(i,j)==false
+                    &&playground.getFlagged(i,j)){
                     return;
                 }
-                if(playground.getBomb(i,j)==false&&playground.getCleared(i,j)==false){
+                if(playground.getBomb(i,j)==false
+                    &&playground.getCleared(i,j)==false){
                     return;
                 }
             }
@@ -166,23 +193,42 @@ $(function(){
 
     function gameWin(){
         timer.stop();
-        var cur = document.getElementsByClassName('timer')[0].innerText.split(":");
-        var record= document.getElementsByClassName('score')[0].innerText.split(":");
-        var record1= document.getElementsByClassName('score1')[0].innerText.split(":");
-        var record2= document.getElementsByClassName('score2')[0].innerText.split(":");
+        var cur = document.getElementsByClassName('timer')[0]
+            .innerText.split(":");
+        var record= document.getElementsByClassName('score')[0]
+            .innerText.split(":");
+        var record1= document.getElementsByClassName('score1')[0]
+            .innerText.split(":");
+        var record2= document.getElementsByClassName('score2')[0]
+            .innerText.split(":");
       
-        if((parseInt(cur[0])<parseInt(record[0])) || (parseInt(cur[0])==parseInt(record[0]) && parseInt(cur[1])<parseInt(record[1])) || (record[0]=="--" && record[1]=="--")){
-            document.getElementsByClassName('score2')[0].innerText = document.getElementsByClassName('score1')[0].innerText;
-            document.getElementsByClassName('score1')[0].innerText = document.getElementsByClassName('score')[0].innerText;
-            document.getElementsByClassName('score')[0].innerText = document.getElementsByClassName('timer')[0].innerText;
+        if((parseInt(cur[0])<parseInt(record[0])) 
+            || (parseInt(cur[0])==parseInt(record[0]) 
+                && parseInt(cur[1])<parseInt(record[1])) 
+            || (record[0]=="--" && record[1]=="--")){
+            document.getElementsByClassName('score2')[0].innerText 
+                = document.getElementsByClassName('score1')[0].innerText;
+            document.getElementsByClassName('score1')[0].innerText 
+                = document.getElementsByClassName('score')[0].innerText;
+            document.getElementsByClassName('score')[0].innerText 
+                = document.getElementsByClassName('timer')[0].innerText;
         }else{
-             if(parseInt(cur[0])<parseInt(record1[0]) || (parseInt(cur[0])==parseInt(record1[0]) && parseInt(cur[1])<parseInt(record1[1])) || record1[0]=="--" && record1[1]=="--"){
-                 document.getElementsByClassName('score2')[0].innerText = document.getElementsByClassName('score1')[0].innerText;
+             if(parseInt(cur[0])<parseInt(record1[0]) 
+                || (parseInt(cur[0])==parseInt(record1[0]) 
+                    && parseInt(cur[1])<parseInt(record1[1])) 
+                || record1[0]=="--" && record1[1]=="--"){
+                 document.getElementsByClassName('score2')[0].innerText 
+                    = document.getElementsByClassName('score1')[0].innerText;
 
-                  document.getElementsByClassName('score1')[0].innerText = document.getElementsByClassName('timer')[0].innerText;
+                  document.getElementsByClassName('score1')[0].innerText 
+                    = document.getElementsByClassName('timer')[0].innerText;
              }else{
-                if(parseInt(cur[0])<parseInt(record2[0]) || (parseInt(cur[0])==parseInt(record2[0]) && parseInt(cur[1])<parseInt(record2[1])) || record2[0]=="--" && record2[1]=="--"){
-                     document.getElementsByClassName('score2')[0].innerText = document.getElementsByClassName('timer')[0].innerText;
+                if(parseInt(cur[0])<parseInt(record2[0]) 
+                    || (parseInt(cur[0])==parseInt(record2[0]) 
+                        && parseInt(cur[1])<parseInt(record2[1])) 
+                    || record2[0]=="--" && record2[1]=="--"){
+                     document.getElementsByClassName('score2')[0].innerText
+                      = document.getElementsByClassName('timer')[0].innerText;
                  }
              }
         }
@@ -191,7 +237,6 @@ $(function(){
 
         setTimeout( function(){
             alert("You Win")
-            // location.reload();
             $('input[id="start-game"]').click();
         }, 300 );
 
@@ -213,7 +258,6 @@ $(function(){
             }
         setTimeout( function(){
             alert("Game Over")
-            // location.reload();
             $('input[id="start-game"]').click();
         }, 300 );
     }
@@ -253,8 +297,12 @@ class PlayGround{
                 playground[randRow][randCol].bomb = true;
                 for(var rowCheck=-1;rowCheck<=1;rowCheck++){
                     for(var colCheck=-1;colCheck<=1;colCheck++){
-                        if(randRow+rowCheck>=0 && randRow+rowCheck<row && randCol+colCheck>=0 && randCol+colCheck<column){
-                            playground[randRow+rowCheck][randCol+colCheck].adj_bomb_count++;
+                        if(randRow+rowCheck>=0 
+                            && randRow+rowCheck<row 
+                            && randCol+colCheck>=0 
+                            && randCol+colCheck<column){
+                            playground[randRow+rowCheck][randCol+colCheck]
+                                .adj_bomb_count++;
                         }
                     }
                 }
@@ -281,10 +329,14 @@ class PlayGround{
         this.playground[row][column].flagged=status;
         if(status==true){
             $('#cell-'+row+'-'+column).addClass("marked");
-            document.getElementById("mines-setting").innerHTML=parseInt(document.getElementById("mines-setting").innerHTML)-1;
+            document.getElementById("mines-setting").innerHTML
+                = parseInt(document.getElementById("mines-setting")
+                    .innerHTML)-1;
         }else{
             $('#cell-'+row+'-'+column).removeClass("marked");
-            document.getElementById("mines-setting").innerHTML=parseInt(document.getElementById("mines-setting").innerHTML)+1;
+            document.getElementById("mines-setting").innerHTML
+                = parseInt(document.getElementById("mines-setting")
+                    .innerHTML)+1;
         }
     }
 
